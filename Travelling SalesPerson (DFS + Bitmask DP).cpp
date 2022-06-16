@@ -56,7 +56,7 @@ int n;
 int a[15][15], dp[15][5000];
 string s;
 
-int DFS(int prev, int pos, int cnt, string mask){
+int DFS(int pos, int cnt, string mask){
     if(cnt==n-1) return a[pos][0];
     int bitMasking = to_decimal(mask);
     if(dp[pos][bitMasking] != -1) return dp[pos][bitMasking];
@@ -64,7 +64,7 @@ int DFS(int prev, int pos, int cnt, string mask){
     for(int i=0; i<n; i++){
         if(mask[i]=='0'){
             mask[i] = '1';
-            ret = min(ret, a[pos][i]+DFS(pos, i, cnt+1, mask));
+            ret = min(ret, a[pos][i]+DFS(i, cnt+1, mask));
             mask[i] = '0';
         }
     }
@@ -78,7 +78,7 @@ void solve(lli tc){
     mem(dp, -1);
     s = string(n, '0');
     s[0] = '1';
-    print(DFS(0, 0, 0, s));
+    print(DFS(0, 0, s));
 }
 
 int main(){
