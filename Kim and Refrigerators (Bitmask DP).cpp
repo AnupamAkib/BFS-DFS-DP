@@ -1,3 +1,5 @@
+//https://www.hackerrank.com/contests/target-samsung-13-nov19/challenges/kim-and-refrigerators
+
 // Bismillahir Rahmanir Rahim //
 #include <iostream>
 #include <math.h>
