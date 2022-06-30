@@ -1,4 +1,4 @@
-
+//https://www.hackerrank.com/contests/target-samsung-13-nov19/challenges/endoscope
 /*BISMILLAHIR RAHMANIR RAHIM*/
 #include<bits/stdc++.h>
 #define lli long long int
