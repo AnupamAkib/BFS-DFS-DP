@@ -1,4 +1,10 @@
-//https://www.hackerrank.com/contests/target-samsung-13-nov19/challenges/travelling-salesman-4/submissions/code/1345759332
+//https://www.hackerrank.com/contests/target-samsung-13-nov19/challenges/travelling-salesman-4/submissions/code/1345759332 (statement not accurate)
+/*
+////Problem statement: 
+https://docs.google.com/document/d/1AjrdQzyzl9JDOQJTfUkdy1Lbj5jT5LS06Vk1Tq7pdLI/edit
+////View this code for bitwise operations on Mask:
+https://gist.github.com/lelouche556/d05095cadb25f0a0d267bf379ef71990
+*/
 
 /*BISMILLAHIR RAHMANIR RAHIM*/
 #include<bits/stdc++.h>
@@ -16,7 +22,7 @@
 #define aInput(ar, n) for(int i=0; i<n; i++)cin>>ar[i];
 #define vInput(v, n) for(int i=0; i<n; i++){lli xwq;cin>>xwq;v.push_back(xwq);}
 #define input2D(ar, row, col) for(int i=0; i<row; i++){for(int j=0; j<col; j++){cin >> ar[i][j];}}
-#define print2D(ar, row, col) for(int i=0; i<row; i++){for(int j=0; j<col; j++){cout << ar[i][j] << " ";}cout<<endl;}
+#define print2D(ar, row, col) for(int i=0; i<row; i++){for(int j=0; j<col; j++){cout << ar[i][j] << "\t";}cout<<endl;}
 #define vprint(vec) for(int i=0; i<vec.size(); i++){cout << vec[i]; (i==vec.size()-1? cout<<endl : cout<<" ");}
 #define aprint(ar, n) for(int i=0; i<n; i++){cout << ar[i] << " ";}cout<<endl
 #define ANUPAM_AKIB ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL)
@@ -43,6 +49,7 @@ lli to_decimal(string s){lli r = 0, p = 1;for(int i=s.sz-1; i>=0; i--){if(s[i] =
 bool isPalindrome(string s){for(int i=0, j=s.size()-1; i<s.size()/2; i++, j--){if(s[i]!=s[j]) return 0;}return 1;}
 bool isPrime(lli n){if(n<2){return false;}if(n==2||n==3){return true;}if(n%2==0){return false;}for(lli i=3; i*i<=n; i+=2){if(n%i==0){return false;}}return true;}
 //vertical & horizontal adjacent moves for 4 sides
+// right, left, top, down
 int dx4[] = {0, 0, -1, 1};
 int dy4[] = {1, -1, 0, 0};
 //adjacent moves for all 8 sides including diagonal moves
@@ -53,32 +60,42 @@ bool cmp(pair<lli, lli> a, pair<lli, lli> b){
 }
 
 int n;
-int a[15][15], dp[15][5000];
-string s;
+int cost[15][15], DP[5000][15]; // 2^12 = 4096, we took 5000 size
+bool visited[15];
 
-int DFS(int pos, int cnt, string mask){
-    if(cnt==n-1) return a[pos][0];
-    int bitMasking = to_decimal(mask);
-    if(dp[pos][bitMasking] != -1) return dp[pos][bitMasking];
+int getBitMask(){ //function to get bitmask integer value from 'visited' array
+    int r=0;
+    for(int i=n-1, p=1; i>=0; i--, p*=2){ //it actually converts 'visited' binary string to its integer value
+        if(visited[i]) r += p;
+    }
+    return r;
+}
+
+int minimumAirfare(int u, int officeToVisit){
+    if(officeToVisit == 1){ //now i have to return back to office 1 (which is 0 in my code)
+        if(!cost[u][0]) return inf; //no path from city u to 0
+        return cost[u][0]; //path from u to 0 found
+    }
+    int mask = getBitMask(); //get bitmask value
+    if(DP[mask][u] != -1) return DP[mask][u]; //this state has already visited, return the answer
     int ret = inf;
-    for(int i=0; i<n; i++){
-        if(mask[i]=='0'){
-            mask[i] = '1';
-            ret = min(ret, a[pos][i]+DFS(i, cnt+1, mask));
-            mask[i] = '0';
+    visited[u] = true;
+    for(int i=0; i<n; i++){ //check all path from 'u'
+        if(!visited[i] and cost[u][i]){//'i' path not visited and there are path between 'u' and 'i'
+            ret = min(ret, cost[u][i]+minimumAirfare(i, officeToVisit-1));
         }
     }
-    return dp[pos][bitMasking]=ret;
+    visited[u] = false;
+    return DP[mask][u]=ret; //memorization and return
 }
 
 void solve(lli tc){
     cin >> n;
-    mem(a, 0);
-    input2D(a, n, n);
-    mem(dp, -1);
-    s = string(n, '0');
-    s[0] = '1';
-    print(DFS(0, 0, s));
+    input2D(cost, n, n);
+    mem(visited, false);
+    mem(DP, -1);
+    int mnAirfare = minimumAirfare(0, n);
+    printcase(mnAirfare);
 }
 
 int main(){
@@ -90,7 +107,7 @@ int main(){
     #endif
 
     lli tc = 1;
-
+    
     cin >> tc; //TEST CASE
 
     for(int i=1; i<=tc; i++){
